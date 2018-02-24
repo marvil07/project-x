@@ -387,10 +387,16 @@ class DrupalProjectType extends PhpProjectType implements TaskSubTypeInterface, 
     {
         $project_root = ProjectX::projectRoot();
         $build_install = $build_root . static::INSTALL_ROOT;
+        $install_path = $this->getInstallPath();
 
-        $stack = $this->taskFilesystemStack()
-            ->copy("{$project_root}/salt.txt", "{$build_root}/salt.txt")
-            ->copy("{$this->getInstallPath()}/sites/default/settings.php", "{$build_install}/sites/default/settings.php");
+        $files_to_copy = [
+          "{$project_root}/salt.txt" => "{$build_root}/salt.txt",
+          "{$install_path}/sites/default/settings.php" => "{$build_install}/sites/default/settings.php",
+        ];
+        $stack = $this->taskFilesystemStack();
+        foreach ($files_to_copy as $origin_file => $destination_file) {
+          $stack->copy($origin_file, $destination_file);
+        }
 
         $mirror_directories = [
             '/config',
