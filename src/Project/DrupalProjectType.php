@@ -379,6 +379,8 @@ class DrupalProjectType extends PhpProjectType implements TaskSubTypeInterface, 
      *   - Copy salt.txt
      *   - Copy settings.php
      *   - Copy themes, modules, and profile custom code.
+     *   - Copy files added by drupal-scaffold.
+     *
      * @param $build_root
      *   The build root path.
      * @return self
@@ -392,6 +394,19 @@ class DrupalProjectType extends PhpProjectType implements TaskSubTypeInterface, 
         $files_to_copy = [
           "{$project_root}/salt.txt" => "{$build_root}/salt.txt",
           "{$install_path}/sites/default/settings.php" => "{$build_install}/sites/default/settings.php",
+          // drupal-scaffold added files needed on built version.
+          // Excluded: '.csslintrc', '.editorconfig', '.eslintignore',
+          // '.eslintrc.json', '.gitattributes',
+          // 'sites/default/default.settings.php',
+          // 'sites/default/default.services.yml',
+          // 'sites/development.services.yml',
+          // 'sites/example.settings.local.php', and
+          // 'sites/example.sites.php'.
+          "{$install_path}/.htaccess" => "{$build_install}/.htaccess",
+          "{$install_path}/index.php" => "{$build_install}/index.php",
+          "{$install_path}/robots.txt" => "{$build_install}/robots.txt",
+          "{$install_path}/update.php" => "{$build_install}/update.php",
+          "{$install_path}/web.config" => "{$build_install}/web.config",
         ];
         $stack = $this->taskFilesystemStack();
         foreach ($files_to_copy as $origin_file => $destination_file) {
